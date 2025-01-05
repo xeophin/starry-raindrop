@@ -2,6 +2,8 @@ name: "Sync GitHub stars with Raindrop"
 on:
   schedule:
     - cron: "13 18 * * *"
+  workflow_dispatch:
+  
 # on:
 #   push:
 #     branches: [main]
