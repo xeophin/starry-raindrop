@@ -6,7 +6,6 @@
   "type": "module",
   "scripts": {
     "start": "node src/index.js",
-    "cron": "forever start src/cron.js",
     "build": "tsc -p .",
     "typecheck": "tsc -p . --noEmit",
     "clean": "rm src/*.js",
@@ -26,9 +25,7 @@
     "@tsconfig/node20": "^20.1.4",
     "@types/lodash": "^4.17.5",
     "axios": "^1.7.2",
-    "cron": "^3.1.7",
     "dotenv": "^16.4.5",
-    "forever": "^4.0.3",
     "lodash": "^4.17.21",
     "octokit": "^4.0.2",
     "ts-node": "^10.9.2",
