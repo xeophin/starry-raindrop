@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/eramdam/starry-raindrop#readme",
   "dependencies": {
-    "@tsconfig/node22": "^22.0.0",
+    "@tsconfig/node22": "^22.0.5",
     "@types/lodash": "^4.17.5",
     "axios": "^1.13.5",
     "dotenv": "^17.2.3",
