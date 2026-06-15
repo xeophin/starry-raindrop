@@ -30,5 +30,8 @@
     "octokit": "^5.0.5",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.21"
   }
 }
