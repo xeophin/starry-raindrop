@@ -12,5 +12,7 @@
       // different options with a single tsconfig.json.
     }
   },
-  "compilerOptions": {}
+  "compilerOptions": {
+    "types": ["node"]
+  }
 }
