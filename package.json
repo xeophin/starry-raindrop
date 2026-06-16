@@ -9,7 +9,10 @@
     "build": "tsc -p .",
     "typecheck": "tsc -p . --noEmit",
     "clean": "rm src/*.js",
-    "docker": "npm install && npm run build && docker compose up -d"
+    "docker": "npm install && npm run build && docker compose up -d",
+    "lint": "oxlint src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt --check src"
   },
   "repository": {
     "type": "git",
