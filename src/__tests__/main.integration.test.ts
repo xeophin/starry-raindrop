@@ -1,4 +1,4 @@
-import { vi, describe, it, expect, beforeEach } from 'vitest'
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest'
 
 const { mockPost, mockPaginate } = vi.hoisted(() => ({
   mockPost: vi.fn(),
@@ -36,12 +36,18 @@ const makeStarResult = (name: string) => ({
 })
 
 describe('main()', () => {
+  let consoleSpy: ReturnType<typeof vi.spyOn>
+
   beforeEach(() => {
     vi.clearAllMocks()
     process.env.RAINDROP_COLLECTION_ID = 'test-collection'
     process.env.GH_TOKEN = 'test-gh-token'
     process.env.RAINDROP_TOKEN = 'test-raindrop-token'
-    vi.spyOn(console, 'log').mockImplementation(() => {})
+    consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+  })
+
+  afterEach(() => {
+    consoleSpy.mockRestore()
   })
 
   it('posts all repos when there are no duplicates', async () => {
