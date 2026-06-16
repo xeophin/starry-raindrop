@@ -55,8 +55,11 @@ describe('mapStarToRaindrop', () => {
     expect(result.tags).toEqual(['github'])
   })
 
-  it('passes collectionId through', () => {
+  it('passes string collectionId through', () => {
     expect(mapStarToRaindrop(makeStar(), 'my-collection').collectionId).toBe('my-collection')
+  })
+
+  it('passes undefined collectionId through', () => {
     expect(mapStarToRaindrop(makeStar(), undefined).collectionId).toBeUndefined()
   })
 })
