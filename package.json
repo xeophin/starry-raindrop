@@ -12,7 +12,8 @@
     "docker": "npm install && npm run build && docker compose up -d",
     "lint": "oxlint src",
     "format": "oxfmt src",
-    "format:check": "oxfmt --check src"
+    "format:check": "oxfmt --check src",
+    "test": "vitest run"
   },
   "repository": {
     "type": "git",
@@ -37,6 +38,7 @@
   "devDependencies": {
     "@types/node": "^22.19.21",
     "oxfmt": "^0.55.0",
-    "oxlint": "^1.70.0"
+    "oxlint": "^1.70.0",
+    "vitest": "^1.6.1"
   }
 }
