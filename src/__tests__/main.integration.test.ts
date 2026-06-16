@@ -12,14 +12,16 @@ vi.mock("axios", () => ({
 }));
 
 vi.mock("octokit", () => ({
-	Octokit: vi.fn().mockImplementation(() => ({
-		paginate: mockPaginate,
-		rest: {
-			activity: {
-				listReposStarredByAuthenticatedUser: {},
+	Octokit: vi.fn().mockImplementation(function () {
+		return {
+			paginate: mockPaginate,
+			rest: {
+				activity: {
+					listReposStarredByAuthenticatedUser: {},
+				},
 			},
-		},
-	})),
+		};
+	}),
 }));
 
 import { main } from "../main.js";
