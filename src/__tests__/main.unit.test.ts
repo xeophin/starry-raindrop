@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { mapStarToRaindrop } from '../main.js'
-import type { ActualStar } from '../main.js'
+import { mapStarToRaindrop, filterNewRaindrops } from '../main.js'
+import type { ActualStar, RaindropItem } from '../main.js'
 
 const makeRepo = (overrides: Partial<{
   full_name: string
@@ -58,5 +58,42 @@ describe('mapStarToRaindrop', () => {
   it('passes collectionId through', () => {
     expect(mapStarToRaindrop(makeStar(), 'my-collection').collectionId).toBe('my-collection')
     expect(mapStarToRaindrop(makeStar(), undefined).collectionId).toBeUndefined()
+  })
+})
+
+describe('filterNewRaindrops', () => {
+  const item = (link: string): RaindropItem => ({
+    collectionId: '1',
+    title: 'title',
+    link,
+    tags: [],
+    created: '',
+    excerpt: null,
+  })
+
+  it('returns all items when duplicates list is empty', () => {
+    const chunk = [item('https://a.com'), item('https://b.com')]
+    expect(filterNewRaindrops(chunk, [])).toEqual(chunk)
+  })
+
+  it('excludes items matching a duplicate link', () => {
+    const chunk = [item('https://a.com'), item('https://b.com')]
+    const result = filterNewRaindrops(chunk, [{ link: 'https://a.com' }])
+    expect(result).toEqual([item('https://b.com')])
+  })
+
+  it('returns empty array when all items are duplicates', () => {
+    const chunk = [item('https://a.com'), item('https://b.com')]
+    const result = filterNewRaindrops(chunk, [
+      { link: 'https://a.com' },
+      { link: 'https://b.com' },
+    ])
+    expect(result).toEqual([])
+  })
+
+  it('handles partial overlap correctly', () => {
+    const chunk = [item('https://a.com'), item('https://b.com'), item('https://c.com')]
+    const result = filterNewRaindrops(chunk, [{ link: 'https://b.com' }])
+    expect(result).toEqual([item('https://a.com'), item('https://c.com')])
   })
 })
