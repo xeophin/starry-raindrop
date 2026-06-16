@@ -10,6 +10,56 @@ const raindropAxios = axios.create({
 	},
 });
 
+export type StarredRepo = {
+  full_name: string;
+  html_url: string;
+  language: string | null;
+  topics?: string[];
+  description: string | null;
+};
+
+export type ActualStar = {
+  starred_at: string;
+  repo: StarredRepo;
+};
+
+export type RaindropItem = {
+  collectionId: string | undefined;
+  title: string;
+  link: string;
+  tags: string[];
+  created: string;
+  excerpt: string | null;
+};
+
+export function mapStarToRaindrop(
+  star: ActualStar,
+  collectionId: string | undefined
+): RaindropItem {
+  return {
+    collectionId,
+    title: star.repo.full_name,
+    link: star.repo.html_url,
+    tags: _([
+      "github",
+      star.repo.language || undefined,
+      ...(star.repo.topics || []),
+    ])
+      .compact()
+      .map((i) => i.toLowerCase())
+      .value(),
+    created: star.starred_at,
+    excerpt: star.repo.description,
+  };
+}
+
+export function filterNewRaindrops(
+  chunk: RaindropItem[],
+  duplicates: { link: string }[]
+): RaindropItem[] {
+  return chunk.filter((r) => duplicates.every((d) => d.link !== r.link));
+}
+
 export const main = async () => {
 	const octokit = new Octokit({ auth: process.env.GH_TOKEN });
 
@@ -24,22 +74,9 @@ export const main = async () => {
 	});
 	console.log(new Date(), `Found ${stars.length} starred repos!`);
 
-	// Since we passed a custom header, the types aren't accurate anymore
-	type ActualStar = { starred_at: string; repo: (typeof stars)[number] };
-
-	const newRaindrops = (stars as unknown as ActualStar[]).map((star) => {
-		return {
-			collectionId: process.env.RAINDROP_COLLECTION_ID,
-			title: star.repo.full_name,
-			link: star.repo.html_url,
-			tags: _(["github", star.repo.language || undefined, ...(star.repo.topics || [])])
-				.compact()
-				.map((i) => i.toLowerCase())
-				.value(),
-			created: star.starred_at,
-			excerpt: star.repo.description,
-		};
-	});
+	const newRaindrops = (stars as unknown as ActualStar[]).map((star) =>
+		mapStarToRaindrop(star, process.env.RAINDROP_COLLECTION_ID)
+	);
 	const chunks = _.chunk(newRaindrops, 100);
 
 	console.log(new Date(), `Looping through chunks of 100 repos...`);
@@ -48,9 +85,7 @@ export const main = async () => {
 			urls: chunk.map((s) => s.link),
 		});
 		const existingUrls = existingUrlsRes.data;
-		const toImport = chunk.filter((r) => {
-			return existingUrls.duplicates.every((d: any) => d.link !== r.link);
-		});
+		const toImport = filterNewRaindrops(chunk, existingUrls.duplicates);
 		if (toImport.length > 0) {
 			await raindropAxios.post("/raindrops", {
 				items: toImport,
